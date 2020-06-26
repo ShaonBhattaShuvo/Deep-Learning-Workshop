@@ -47,3 +47,6 @@ plt.xlabel("X", fontsize=20)
 plt.ylabel("y",rotation = 0, fontsize = 20)
 plt.show()
 
+#Spliting the dataset into Training and Testset
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
+
