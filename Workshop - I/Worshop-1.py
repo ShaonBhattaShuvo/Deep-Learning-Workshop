@@ -100,3 +100,28 @@ ax[1].legend()
 plt.tight_layout()
 plt.show()
 
+#Creating Linear Regression Model
+lr_model = LinearRegression()
+#Training the model
+lr_model.fit(X_train,y_train)
+#Testing the model's performance
+y_pred_lr = lr_model.predict(X_test)
+mse = metrics.mean_squared_error(y_test,y_pred_lr)
+print("MSE: ", mse)
+
+#visualizing the Training and Testset performance of Linear Regression
+fig, ax = plt.subplots (nrows=1, ncols=2, figsize=(8, 4))
+ax[0].scatter (X_train, y_train, color='red', edgecolors='green', label='Synthetic Data Points')
+ax[0].plot(X_train,lr_model.predict(X_train),color='blue', label='Regression Line')
+ax[0].set_title("tanh Activation Plot (Training Set)")
+ax[0].set_xlabel("X_train", fontsize=20)
+ax[0].set_ylabel("y_train", fontsize = 20)
+ax[0].legend()
+ax[1].scatter(X_test,y_test,color='red', edgecolors='green', label='Synthetic Data Points')
+ax[1].plot(X_test,lr_model.predict(X_test),color='blue',label='Regression Line')
+ax[1].set_title("tanh Activation Plot (Testing Set)")
+ax[1].set_xlabel("X_test", fontsize=20)
+ax[1].set_ylabel("y_test", fontsize = 20)
+ax[1].legend()
+plt.tight_layout()
+plt.show()
