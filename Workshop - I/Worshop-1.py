@@ -63,16 +63,22 @@ model = tf.keras.Sequential([
         tf.keras.layers.Dense(1)
         ])
 #Compiling the model with Stochatstic Gradient Discent optimizer and MSE as the loss function
-model.compile(optimizer=tf.keras.optimizers.SGD(), loss='mean_squared_error', metrices=['mean_squared_error'])
+model.compile(optimizer=tf.keras.optimizers.SGD(lr=0.01), loss='mean_squared_error', metrices=['mean_squared_error'])
 #Model's Summary
 model.summary()
 #Training the model 
-model.fit(X_train,y_train, epochs = 50, batch_size =512)
+training = model.fit(X_train,y_train, epochs = 50, batch_size =10)
 #Testing the models performance 
 y_pred = model.predict(X_test)
 mse = metrics.mean_squared_error(y_test,y_pred)
 print("Testset Result: \n---------------")
 print("MSE: ", mse)
+#Visualizing training loss values
+plt.plot(training.history['loss'], label='Training Loss')
+plt.title('Model Loss')
+plt.xlabel('Epoch')
+plt.ylabel('Loss')
+plt.legend()
 
 #Reshapping the matrix into array to pass the value into np.linspace() for 2D visualizaiton. 
 x_train_arr = np.asarray(X_train).reshape(-1)
