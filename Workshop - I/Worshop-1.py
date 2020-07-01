@@ -206,8 +206,28 @@ model.summary()
 training = model.fit(X_train,y_train, epochs = 50, batch_size =10, validation_data =(X_val,y_val))
 
 #Visulaizing the Training and Validation Sets Loss and Accuracy
+fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(8,4))
+#Plot training and validation accuracy values
+#axes[0].set_ylim(0,1)
+axes[0].plot(training.history['accuracy'], label='Train')
+axes[0].plot(training.history['val_accuracy'], label='Validation')
+axes[0].set_title('Model Accuracy')
+axes[0].set_xlabel('Epoch')
+axes[0].set_ylabel('Accuracy')
+axes[0].legend()
+#Plot training and validation loss values
+#axes[1].set_ylim(0,1)
+axes[1].plot(training.history['loss'], label='Train')
+axes[1].plot(training.history['val_loss'], label='Validation')
+axes[1].set_title('Model Loss')
+axes[1].set_xlabel('Epoch')
+axes[1].set_ylabel('Loss')
+axes[1].legend()
+plt.tight_layout()
+plt.show()
 
-
+#Evaluating the performance on the Test set
+evaluate = model.evaluate(X_test, y_test, verbose=2)
 
 # Visualising the Training and Test set plot decision area
 fig, axes = plt.subplots (nrows=1, ncols=2, figsize=(8, 4))
@@ -229,3 +249,4 @@ fig2.legend(handles,
 
 plt.tight_layout()
 plt.show()
+
