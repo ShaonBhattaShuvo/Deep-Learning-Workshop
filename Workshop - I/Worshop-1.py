@@ -6,6 +6,7 @@ Created on Thu Jun 25 22:07:36 2020
 """
 #Importing Libraries
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 import sklearn.datasets as skd
 from sklearn import preprocessing 
@@ -16,6 +17,14 @@ from sklearn import metrics
 
 #Generating synthetic linear dataset 
 X,y = skd.make_regression(n_samples=100, n_features=1, n_targets=1, bias=0.5, noise=5.5, random_state=42)
+#Reading dataset from csv file 
+dataframe = pd.read_csv("datasetName.csv", header=None) #header=0 if first row/line is the header of the dataset
+dataset = dataframe.values
+#Split into input (X) and output (Y) variables,
+#Lets say the dataset have n number of columns where the last column is the target value 
+#therefore we have first n-2 columns as independent variables (inputs) and the (n-1)th column is the as output since index starts from 0
+#X = dataset[:,0:n-1] # when range is [start:end] value is read from start to end-1 index 
+#y = dataset[:,n-1] # here it is not range is specific index
 
 # Visulalizing the synthetic dataset
 print("\nVisualizing the Synthetic Dataset")
@@ -62,6 +71,8 @@ model = tf.keras.Sequential([
         tf.keras.layers.Dense(100, activation='tanh'),
         tf.keras.layers.Dense(1,) #linear by default, also can add: activation ='linear' 
         ])
+#model Looks like:  1 input -> [50 units in layer1] ->[100 units in layer2] -> 1 output
+
 #Compiling the model with Stochatstic Gradient Discent optimizer and MSE as the loss function
 model.compile(optimizer=tf.keras.optimizers.SGD(lr=0.001), loss='mean_squared_error', metrices=['mean_squared_error'])
 #Model's Summary
@@ -159,3 +170,7 @@ plt.legend()
 #plt.margins()
 plt.show()  
 #
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
+print("Frequency of unique class of elements in the test set:")
+unique_elements_test, count_elements_test=np.unique(y_test, return_counts=True)
+print(unique_elements_test, count_elements_test)
