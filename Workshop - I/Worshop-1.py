@@ -7,15 +7,15 @@ Created on Thu Jun 25 22:07:36 2020
 #Importing Libraries
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.datasets import make_regression
+import sklearn.datasets as skd
 from sklearn import preprocessing 
 import tensorflow as tf
 from sklearn.linear_model import LinearRegression 
 from sklearn.model_selection import train_test_split
 from sklearn import metrics 
 
-#Generating synthetic linear dataset
-X,y = make_regression(n_samples=100, n_features=1, n_targets=1, bias=0.5, noise=5.5, random_state=42)
+#Generating synthetic linear dataset 
+X,y = skd.make_regression(n_samples=100, n_features=1, n_targets=1, bias=0.5, noise=5.5, random_state=42)
 
 # Visulalizing the synthetic dataset
 print("\nVisualizing the Synthetic Dataset")
@@ -32,18 +32,18 @@ y = y.reshape(-1,1) #if y is not an array then use, np.asanyarray(y).reshape(-1,
 
 #Feature Scaling (Standardization : needs 2D array as input) 
 #Here your data Z is rescaled such that μ = 0 and 𝛔 = 1, and is done through this formula: z= (Xi - μ)/𝛔
-sc = preprocessing.StandardScaler()
-X = sc.fit_transform(X)
-y = sc.fit_transform(y)
+#sc = preprocessing.StandardScaler()
+#X = sc.fit_transform(X)
+#y = sc.fit_transform(y)
 
 # Visulalizing the synthetic dataset after standardization 
-print("\nVisualizing the Synthetic Dataset after Standardization")
-plt.style.use("ggplot")
-plt.scatter(X,y,color='red',edgecolors="green")
-plt.title("Synthetic Dataset")
-plt.xlabel("X", fontsize=20)
-plt.ylabel("y",rotation = 0, fontsize = 20)
-plt.show()
+#print("\nVisualizing the Synthetic Dataset after Standardization")
+#plt.style.use("ggplot")
+#plt.scatter(X,y,color='red',edgecolors="green")
+#plt.title("Synthetic Dataset")
+#plt.xlabel("X", fontsize=20)
+#plt.ylabel("y",rotation = 0, fontsize = 20)
+#plt.show()
 
 #Spliting the dataset into Training and Testset
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
@@ -60,10 +60,10 @@ model = tf.keras.Sequential([
         tf.keras.Input(shape = (1,)), 
         tf.keras.layers.Dense(50, activation='tanh'),
         tf.keras.layers.Dense(100, activation='tanh'),
-        tf.keras.layers.Dense(1)
+        tf.keras.layers.Dense(1,) #linear by default, also can add: activation ='linear' 
         ])
 #Compiling the model with Stochatstic Gradient Discent optimizer and MSE as the loss function
-model.compile(optimizer=tf.keras.optimizers.SGD(lr=0.01), loss='mean_squared_error', metrices=['mean_squared_error'])
+model.compile(optimizer=tf.keras.optimizers.SGD(lr=0.001), loss='mean_squared_error', metrices=['mean_squared_error'])
 #Model's Summary
 model.summary()
 #Training the model 
@@ -73,6 +73,7 @@ y_pred = model.predict(X_test)
 mse = metrics.mean_squared_error(y_test,y_pred)
 print("Testset Result: \n---------------")
 print("MSE: ", mse)
+
 #Visualizing training loss values
 plt.plot(training.history['loss'], label='Training Loss')
 plt.title('Model Loss')
@@ -93,13 +94,13 @@ xp_test = np.linspace(x_test_arr.min(), x_test_arr.max())
 fig, ax = plt.subplots (nrows=1, ncols=2, figsize=(8, 4))
 ax[0].scatter (X_train, y_train, color='red', edgecolors='green', label='Synthetic Data Points')
 ax[0].plot(xp_train,model.predict(xp_train.reshape(-1)),color='blue', label='Regression Line')
-ax[0].set_title("tanh Activation Plot (Training Set)")
+ax[0].set_title("NN Regression Plot (Training Set)")
 ax[0].set_xlabel("X_train", fontsize=20)
 ax[0].set_ylabel("y_train", fontsize = 20)
 ax[0].legend()
 ax[1].scatter(X_test,y_test,color='red', edgecolors='green', label='Synthetic Data Points')
 ax[1].plot(xp_test,model.predict(xp_test.reshape(-1)),color='blue',label='Regression Line')
-ax[1].set_title("tanh Activation Plot (Testing Set)")
+ax[1].set_title("NN Regression Plot (Testing Set)")
 ax[1].set_xlabel("X_test", fontsize=20)
 ax[1].set_ylabel("y_test", fontsize = 20)
 ax[1].legend()
@@ -119,15 +120,42 @@ print("MSE: ", mse)
 fig, ax = plt.subplots (nrows=1, ncols=2, figsize=(8, 4))
 ax[0].scatter (X_train, y_train, color='red', edgecolors='green', label='Synthetic Data Points')
 ax[0].plot(X_train,lr_model.predict(X_train),color='blue', label='Regression Line')
-ax[0].set_title("tanh Activation Plot (Training Set)")
+ax[0].set_title("Linear Regression Plot (Training Set)")
 ax[0].set_xlabel("X_train", fontsize=20)
 ax[0].set_ylabel("y_train", fontsize = 20)
 ax[0].legend()
 ax[1].scatter(X_test,y_test,color='red', edgecolors='green', label='Synthetic Data Points')
 ax[1].plot(X_test,lr_model.predict(X_test),color='blue',label='Regression Line')
-ax[1].set_title("tanh Activation Plot (Testing Set)")
+ax[1].set_title("Linear Regression Plot (Testing Set)")
 ax[1].set_xlabel("X_test", fontsize=20)
 ax[1].set_ylabel("y_test", fontsize = 20)
 ax[1].legend()
 plt.tight_layout()
 plt.show()
+
+#Generating synthetic non-linear data to solve classification problem
+X,y = skd.make_circles(n_samples=100, shuffle=False, noise=None, random_state=None, factor=0.5)
+
+#Following classes will not be shapped as circle, parameters can be changed to make it more non-linear
+#X, y = skd.make_classification(n_samples=100, n_features=2, n_redundant=0, n_informative=2,
+#                             n_clusters_per_class=1,class_sep=0.5,flip_y=0.2, random_state=1,shuffle=False)
+
+#Renaming the class 0 as -1 (not mandatory). 
+for i, j in enumerate(np.asarray(y)):
+    if j==0:
+        y[i] = -1
+#Finding and counting unique elements. 
+unique_elements, counts_elements = np.unique(y, return_counts=True)
+print("Frequency of unique class of the dataset:")
+print(np.asarray((unique_elements, counts_elements)))
+
+print("\nVisualizing the synthetic dataset of Class 1 and Class -1: ")
+plt.plot(X[:, 0][y == -1], X[:, 1][y == -1], 'g^', label='Class: -1')
+plt.plot(X[:, 0][y == 1], X[:, 1][y == 1], 'o', label="Class: 1")
+plt.title("Visualizing the synthetic dataset of class 1 and -1")
+plt.xlabel("X1")
+plt.ylabel("X2")
+plt.legend()
+#plt.margins()
+plt.show()  
+#
