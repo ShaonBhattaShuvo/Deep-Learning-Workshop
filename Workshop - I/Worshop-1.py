@@ -17,9 +17,10 @@ from sklearn import metrics
 
 #Generating synthetic linear dataset 
 X,y = skd.make_regression(n_samples=100, n_features=1, n_targets=1, bias=0.5, noise=5.5, random_state=42)
+
 #Reading dataset from csv file 
-dataframe = pd.read_csv("datasetName.csv", header=None) #header=0 if first row/line is the header of the dataset
-dataset = dataframe.values
+#dataframe = pd.read_csv("datasetName.csv", header=None) #header=0 if first row/line is the header of the dataset
+#dataset = dataframe.values
 #Split into input (X) and output (Y) variables,
 #Lets say the dataset have n number of columns where the last column is the target value 
 #therefore we have first n-2 columns as independent variables (inputs) and the (n-1)th column is the as output since index starts from 0
@@ -127,7 +128,7 @@ y_pred_lr = lr_model.predict(X_test)
 mse = metrics.mean_squared_error(y_test,y_pred_lr)
 print("MSE: ", mse)
 
-#visualizing the Training and Testset performance of Linear Regression
+#Visualizing the Training and Testset performance of Linear Regression
 fig, ax = plt.subplots (nrows=1, ncols=2, figsize=(8, 4))
 ax[0].scatter (X_train, y_train, color='red', edgecolors='green', label='Synthetic Data Points')
 ax[0].plot(X_train,lr_model.predict(X_train),color='blue', label='Regression Line')
@@ -160,17 +161,25 @@ unique_elements, counts_elements = np.unique(y, return_counts=True)
 print("Frequency of unique class of the dataset:")
 print(np.asarray((unique_elements, counts_elements)))
 
-print("\nVisualizing the synthetic dataset of Class 1 and Class -1: ")
+#Visualizing the synthetic dataset of Class 1 and Class -1: 
 plt.plot(X[:, 0][y == -1], X[:, 1][y == -1], 'g^', label='Class: -1')
 plt.plot(X[:, 0][y == 1], X[:, 1][y == 1], 'o', label="Class: 1")
 plt.title("Visualizing the synthetic dataset of class 1 and -1")
 plt.xlabel("X1")
 plt.ylabel("X2")
 plt.legend()
-#plt.margins()
 plt.show()  
-#
+
+#Spliting the dataset into train and testset
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
+
 print("Frequency of unique class of elements in the test set:")
 unique_elements_test, count_elements_test=np.unique(y_test, return_counts=True)
 print(unique_elements_test, count_elements_test)
+
+#Creating validation set  by copying last 10 elements from the training set
+X_validation = X_train[70:]
+y_validation = y_train[70:]
+#Removing the last 10 elements from training set
+X_train = X_train[:70]
+y_train = y_train[:70]
