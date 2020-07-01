@@ -10,10 +10,11 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import sklearn.datasets as skd
 from sklearn import preprocessing 
-import tensorflow as tf
+import tensorflow.keras as tfk
 from sklearn.linear_model import LinearRegression 
 from sklearn.model_selection import train_test_split
 from sklearn import metrics 
+from mlxtend.plotting import plot_decision_regions
 
 #Generating synthetic linear dataset 
 X,y = skd.make_regression(n_samples=100, n_features=1, n_targets=1, bias=0.5, noise=5.5, random_state=42)
@@ -66,11 +67,11 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 #In Keras, the input layer itself is not a layer, but a tensor. It's the starting tensor you send to the first 
 #hidden layer. This tensor must have the same shape as your training data.
 #In our example input data is one dimentional and also has only one element (column). 
-model = tf.keras.Sequential([
-        tf.keras.Input(shape = (1,)), 
-        tf.keras.layers.Dense(50, activation='tanh'),
-        tf.keras.layers.Dense(100, activation='tanh'),
-        tf.keras.layers.Dense(1,) #linear by default, also can add: activation ='linear' 
+model = tfk.Sequential([
+        tfk.Input(shape = (1,)),            
+        tfk.layers.Dense(50, activation='tanh'),  #first hidden layer
+        tfk.layers.Dense(100, activation='tanh'), #seond hidden layer
+        tfk.layers.Dense(1,) #activation linear by default, also can add: activation ='linear' 
         ])
 #model Looks like:  1 input -> [50 units in layer1] ->[100 units in layer2] -> 1 output
 
@@ -152,19 +153,15 @@ X,y = skd.make_circles(n_samples=100, shuffle=False, noise=None, random_state=No
 #X, y = skd.make_classification(n_samples=100, n_features=2, n_redundant=0, n_informative=2,
 #                             n_clusters_per_class=1,class_sep=0.5,flip_y=0.2, random_state=1,shuffle=False)
 
-#Renaming the class 0 as -1 (not mandatory). 
-for i, j in enumerate(np.asarray(y)):
-    if j==0:
-        y[i] = -1
 #Finding and counting unique elements. 
 unique_elements, counts_elements = np.unique(y, return_counts=True)
 print("Frequency of unique class of the dataset:")
 print(np.asarray((unique_elements, counts_elements)))
 
 #Visualizing the synthetic dataset of Class 1 and Class -1: 
-plt.plot(X[:, 0][y == -1], X[:, 1][y == -1], 'g^', label='Class: -1')
+plt.plot(X[:, 0][y == 0], X[:, 1][y == 0], 'g^', label='Class: 0')
 plt.plot(X[:, 0][y == 1], X[:, 1][y == 1], 'o', label="Class: 1")
-plt.title("Visualizing the synthetic dataset of class 1 and -1")
+plt.title("Visualizing the synthetic dataset of class 1 and 0")
 plt.xlabel("X1")
 plt.ylabel("X2")
 plt.legend()
@@ -178,8 +175,57 @@ unique_elements_test, count_elements_test=np.unique(y_test, return_counts=True)
 print(unique_elements_test, count_elements_test)
 
 #Creating validation set  by copying last 10 elements from the training set
-X_validation = X_train[70:]
-y_validation = y_train[70:]
-#Removing the last 10 elements from training set
+X_val = X_train[70:]
+y_val = y_train[70:]
+#Removing the validation set (last 10 elements) from training set
 X_train = X_train[:70]
 y_train = y_train[:70]
+
+#Creating the deep learning model (Lets try a differnt apprach, can be used same approach shown earlier) 
+model = tfk.Sequential()
+#First Hidden Layer
+model.add(tfk.layers.Dense(50, activation='relu', kernel_initializer='random_normal', input_shape=(2,)))
+#Second  Hidden Layer
+model.add(tfk.layers.Dense(100, activation='relu', kernel_initializer='random_normal'))
+#Output Layer
+model.add(tfk.layers.Dense(1, activation='sigmoid', kernel_initializer='random_normal'))
+
+#Model can be crated using following approach as well
+#input_units = tfk.Input(shape=(2,))
+#hidden_layer1 = tfk.layers.Dense(100, activation ='relu')((input_units))
+#hidden_layer2 = tfk.layers.Dense(50, activation ='relu')(hidden_layer1)
+#prediction = tfk.layers.Dense(1, activation ='sigmoid')(hidden_layer2)
+#model = tfk.models.Model(inputs=input_units, outputs=prediction)
+
+#model Looks like:  2 input -> [4 units in layer1] ->[4 units in layer2] -> 1 output
+model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+#Model's Summary
+model.summary()
+
+#Training the model 
+training = model.fit(X_train,y_train, epochs = 50, batch_size =10, validation_data =(X_val,y_val))
+
+#Visulaizing the Training and Validation Sets Loss and Accuracy
+
+
+
+# Visualising the Training and Test set plot decision area
+fig, axes = plt.subplots (nrows=1, ncols=2, figsize=(8, 4))
+fig1 = plot_decision_regions(X_train, y_train, clf=model, ax=axes[0], legend=0)
+fig2 = plot_decision_regions(X_test, y_test, clf=model, ax=axes[1], legend=0)
+
+axes[0].set_title('Sigmoid (Training set)')
+axes[0].set_xlabel('x1')
+axes[0].set_ylabel('x2')
+axes[1].set_title('Sigmoid (Test set)')
+axes[1].set_xlabel('x1')
+axes[1].set_ylabel('x2')
+
+handles, labels = fig1.get_legend_handles_labels()
+fig1.legend(handles, 
+          ['class 0', 'class 1'])
+fig2.legend(handles, 
+          ['class 0', 'class 1'])
+
+plt.tight_layout()
+plt.show()
