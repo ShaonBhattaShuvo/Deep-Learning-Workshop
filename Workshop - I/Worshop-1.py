@@ -70,13 +70,13 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 model = tfk.Sequential([
         tfk.Input(shape = (1,)),            
         tfk.layers.Dense(50, activation='tanh'),  #first hidden layer
-        tfk.layers.Dense(100, activation='tanh'), #seond hidden layer
+        tfk.layers.Dense(100, activation='tanh'), #second hidden layer
         tfk.layers.Dense(1,) #activation linear by default, also can add: activation ='linear' 
         ])
 #model Looks like:  1 input -> [50 units in layer1] ->[100 units in layer2] -> 1 output
 
 #Compiling the model with Stochatstic Gradient Discent optimizer and MSE as the loss function
-model.compile(optimizer=tf.keras.optimizers.SGD(lr=0.001), loss='mean_squared_error', metrices=['mean_squared_error'])
+model.compile(optimizer=tfk.optimizers.SGD(lr=0.001), loss='mean_squared_error', metrices=['mean_squared_error'])
 #Model's Summary
 model.summary()
 #Training the model 
@@ -147,7 +147,7 @@ plt.tight_layout()
 plt.show()
 
 #Generating synthetic non-linear data to solve classification problem
-X,y = skd.make_circles(n_samples=100, shuffle=False, noise=None, random_state=None, factor=0.5)
+X,y = skd.make_circles(n_samples=100, shuffle=False, noise=None, random_state=None, factor=0.8)
 
 #Following classes will not be shapped as circle, parameters can be changed to make it more non-linear
 #X, y = skd.make_classification(n_samples=100, n_features=2, n_redundant=0, n_informative=2,
@@ -160,7 +160,7 @@ print(np.asarray((unique_elements, counts_elements)))
 
 #Visualizing the synthetic dataset of Class 1 and Class -1: 
 plt.plot(X[:, 0][y == 0], X[:, 1][y == 0], 'g^', label='Class: 0')
-plt.plot(X[:, 0][y == 1], X[:, 1][y == 1], 'o', label="Class: 1")
+plt.plot(X[:, 0][y == 1], X[:, 1][y == 1], 'ro' , label="Class: 1")
 plt.title("Visualizing the synthetic dataset of class 1 and 0")
 plt.xlabel("X1")
 plt.ylabel("X2")
@@ -183,12 +183,9 @@ y_train = y_train[:70]
 
 #Creating the deep learning model (Lets try a differnt apprach, can be used same approach shown earlier) 
 model = tfk.Sequential()
-#First Hidden Layer
-model.add(tfk.layers.Dense(50, activation='relu', kernel_initializer='random_normal', input_shape=(2,)))
-#Second  Hidden Layer
-model.add(tfk.layers.Dense(100, activation='relu', kernel_initializer='random_normal'))
-#Output Layer
-model.add(tfk.layers.Dense(1, activation='sigmoid', kernel_initializer='random_normal'))
+model.add(tfk.layers.Dense(50,input_shape=(2,), activation='relu')) #First Hidden Layer
+model.add(tfk.layers.Dense(100, activation='relu')) #Second  Hidden Layer
+model.add(tfk.layers.Dense(1, activation='sigmoid')) #Output Layer
 
 #Model can be crated using following approach as well
 #input_units = tfk.Input(shape=(2,))
@@ -197,8 +194,10 @@ model.add(tfk.layers.Dense(1, activation='sigmoid', kernel_initializer='random_n
 #prediction = tfk.layers.Dense(1, activation ='sigmoid')(hidden_layer2)
 #model = tfk.models.Model(inputs=input_units, outputs=prediction)
 
-#model Looks like:  2 input -> [4 units in layer1] ->[4 units in layer2] -> 1 output
-model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+#model Looks like:  2 input -> [50 units in layer1] ->[100 units in layer2] -> 1 output
+
+# Compiling the model for binary classification # Use loss = categorical_crossentropy for multiclass prediction. 
+model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy']) 
 #Model's Summary
 model.summary()
 
@@ -208,7 +207,7 @@ training = model.fit(X_train,y_train, epochs = 50, batch_size =10, validation_da
 #Visulaizing the Training and Validation Sets Loss and Accuracy
 fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(8,4))
 #Plot training and validation accuracy values
-#axes[0].set_ylim(0,1)
+#axes[0].set_ylim(0,1) #if we want to limit axis in certain range
 axes[0].plot(training.history['accuracy'], label='Train')
 axes[0].plot(training.history['val_accuracy'], label='Validation')
 axes[0].set_title('Model Accuracy')
@@ -226,18 +225,17 @@ axes[1].legend()
 plt.tight_layout()
 plt.show()
 
-#Evaluating the performance on the Test set
-evaluate = model.evaluate(X_test, y_test, verbose=2)
+# Evaluating the performance on the Test set 
+test_loss_accuracy = model.evaluate(X_test, y_test, verbose=2)
 
 # Visualising the Training and Test set plot decision area
 fig, axes = plt.subplots (nrows=1, ncols=2, figsize=(8, 4))
 fig1 = plot_decision_regions(X_train, y_train, clf=model, ax=axes[0], legend=0)
 fig2 = plot_decision_regions(X_test, y_test, clf=model, ax=axes[1], legend=0)
-
-axes[0].set_title('Sigmoid (Training set)')
+axes[0].set_title('NN Plot Decision Region (Training set)')
 axes[0].set_xlabel('x1')
 axes[0].set_ylabel('x2')
-axes[1].set_title('Sigmoid (Test set)')
+axes[1].set_title('NN Plot Decision Region (Test set)')
 axes[1].set_xlabel('x1')
 axes[1].set_ylabel('x2')
 
@@ -249,4 +247,23 @@ fig2.legend(handles,
 
 plt.tight_layout()
 plt.show()
+
+# Predicting the Test set results
+y_pred = model.predict(X_test)
+# Converting the predicted result into desired class level
+# Singmoid produce the output between 0 and 1. Therefore, the decision boundary for sigmoid is 0.5
+for i in range(0, len(y_pred)):
+    if(y_pred[i]>0.5):
+        y_pred[i] = 1
+    else:
+        y_pred[i] = 0
+
+# Generating confusion matrics, details classification report
+cm = metrics.confusion_matrix(y_test,y_pred)
+print("Confusion Matrix for Neural Network Model:\n ",cm)
+print( "{0}".format(metrics.classification_report(y_test,y_pred)))
+# Generating accuracy in %, 
+# Similary precision_score and recall_score can be used to generate precision and recall seperately
+accuracy_test = metrics.accuracy_score(y_test,y_pred)*100
+print('Accuracy:%.2f' % accuracy_test,"%")
 
