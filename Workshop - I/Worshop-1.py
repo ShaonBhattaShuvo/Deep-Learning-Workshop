@@ -267,3 +267,38 @@ print( "{0}".format(metrics.classification_report(y_test,y_pred)))
 accuracy_test = metrics.accuracy_score(y_test,y_pred)*100
 print('Accuracy:%.2f' % accuracy_test,"%")
 
+# Using non-linear svm calssifier , use kernel=linear for linear classifier. 
+from sklearn import svm
+classifier = svm.SVC(kernel='rbf') #rbf = 'radial basis function' for non-linear classification
+classifier.fit(X_train,y_train)
+
+# Predicting Teset set result
+y_pred = classifier.predict(X_test)
+
+# Generating confusion matrics, details classification report
+cm = metrics.confusion_matrix(y_test,y_pred)
+print("Confusion Matrix for SVM Clssifer:\n ",cm)
+print( "{0}".format(metrics.classification_report(y_test,y_pred)))
+# Generating accuracy in %, 
+# Similary precision_score and recall_score can be used to generate precision and recall seperately
+accuracy_test = metrics.accuracy_score(y_test,y_pred)*100
+print('Accuracy:%.2f' % accuracy_test,"%")
+
+# Visualising the Training and Test set plot decision area
+fig, axes = plt.subplots (nrows=1, ncols=2, figsize=(8, 4))
+fig1 = plot_decision_regions(X_train, y_train, clf=classifier, ax=axes[0], legend=0)
+fig2 = plot_decision_regions(X_test, y_test, clf=classifier, ax=axes[1], legend=0)
+axes[0].set_title('SVM Plot Decision Region (Training set)')
+axes[0].set_xlabel('x1')
+axes[0].set_ylabel('x2')
+axes[1].set_title('SVM Plot Decision Region (Test set)')
+axes[1].set_xlabel('x1')
+axes[1].set_ylabel('x2')
+handles, labels = fig1.get_legend_handles_labels()
+fig1.legend(handles, 
+          ['class 0', 'class 1'])
+fig2.legend(handles, 
+          ['class 0', 'class 1'])
+
+plt.tight_layout()
+plt.show()
