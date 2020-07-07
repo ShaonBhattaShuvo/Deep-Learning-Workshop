@@ -13,7 +13,8 @@ With the availability of data and the increase of computational power, the appli
 Intended Learning Outcomes:
 
 At the end of this workshop, active participants should be able to: 
-	1.	Identify the importance and applications of deep learning. 
+
+		-Identify the importance and applications of deep learning. 
 	2.	Choose between machine learning and deep learning approaches to solve a particular problem.
 	3.	Demonstrate basic concepts of deep learning workflow. 
 	4.	Build deep learning models from scratch. 
