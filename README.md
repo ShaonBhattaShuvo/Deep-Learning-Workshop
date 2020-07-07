@@ -3,18 +3,19 @@ The repository contains python codes, which I have developed as the facilitator 
 
 Workshop on Deep Learning
 facilitator 
-Shaon Bhatta Shuvo
-PhD Student, School of Computer Science
+Shaon Bhatta Shuvo,
+PhD Student, School of Computer Science,
 University of Windsor, Ontario, Canada.
 Email: shuvos@uwindsor.ca
 ----------------------------------------------------------------------------------------------------
 Objective:
+
 With the availability of data and the increase of computational power, the applications of deep learning and the popularity is increasing exponentially. The main objective of this workshop is to provide introductory theoretical knowledge on deep learning and practical implementations using python programming language and associated packages. Therefore, participants will get an overall idea of deep learning and its applications. This workshop will also guide students on what they need to learn to able to build their careers in this field. Overall the workshop shall work as a useful starting point and will encourage participants to dig deeper into the field of deep learning.
 Intended Learning Outcomes:
 
 At the end of this workshop, active participants should be able to: 
 
-		-Identify the importance and applications of deep learning. 
+	1.	Identify the importance and applications of deep learning. 
 	2.	Choose between machine learning and deep learning approaches to solve a particular problem.
 	3.	Demonstrate basic concepts of deep learning workflow. 
 	4.	Build deep learning models from scratch. 
@@ -29,7 +30,9 @@ Prerequisites:
 	2.	Basic knowledge of Machine Learning with help to understand the concept with less effort.  
 
 Required Tools/Setup:
+
 To follow the implantations along with the instructor and to avoid any unwanted delay, the participants are advised to install following tools/packages before joining the workshop:
+
 1.	Strongly Recommend: 
 	-	Python (Latest Version)
 	-	Anaconda (Latest Version)  
