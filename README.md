@@ -1,5 +1,5 @@
 # Deep-Learning-Workshop
-The repository contains python codes, which I have developed as the facilitator of the two consecutive Deep Learning Workshops (I and II) for the master's students of computer science, University of Windsor.
+The repository contains python codes, which I have developed as the facilitator of the two consecutive Deep Learning Workshops (PART-I and PART-II) for the master's students of computer science, University of Windsor.
 
 Workshop on Deep Learning
 facilitator 
@@ -26,6 +26,7 @@ At the end of this workshop, active participants should be able to:
  
 
 Prerequisites:
+
 	1.	The participants are expected to have a minimum basic understanding of python programming language. 
 	2.	Basic knowledge of Machine Learning with help to understand the concept with less effort.  
 
