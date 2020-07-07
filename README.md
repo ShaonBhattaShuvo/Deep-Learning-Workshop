@@ -28,7 +28,7 @@ At the end of this workshop, active participants should be able to:
 Prerequisites:
 
 	1.	The participants are expected to have a minimum basic understanding of python programming language. 
-	2.	Basic knowledge of Machine Learning with help to understand the concept with less effort.  
+	2.	Basic knowledge of Machine Learning will help to understand the concept with less effort.  
 
 Required Tools/Setup:
 
