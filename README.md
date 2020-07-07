@@ -1,12 +1,12 @@
 # Deep-Learning-Workshop
 The repository contains python codes, which I have developed as the facilitator of the two consecutive Deep Learning Workshops (PART-I and PART-II) for the master's students of computer science, University of Windsor.
 
-Workshop on Deep Learning
+"Workshop on Deep Learning"
 facilitator 
 Shaon Bhatta Shuvo,
 PhD Student, School of Computer Science,
 University of Windsor, Ontario, Canada.
-Email: shuvos@uwindsor.ca
+      Email: shuvos@uwindsor.ca
 ----------------------------------------------------------------------------------------------------
 Objective:
 
