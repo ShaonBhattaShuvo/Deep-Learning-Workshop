@@ -5,7 +5,7 @@ The repository contains python codes, which I have developed as the facilitator 
 facilitator 
 Shaon Bhatta Shuvo,
 PhD Student, School of Computer Science,
-University of Windsor, Ontario, Canada.
+University of Windsor, 401 Sunset Avenue, Windsor, Ontario, Canada.
       Email: shuvos@uwindsor.ca
 ----------------------------------------------------------------------------------------------------
 Objective:
@@ -13,7 +13,7 @@ Objective:
 With the availability of data and the increase of computational power, the applications of deep learning and the popularity is increasing exponentially. The main objective of this workshop is to provide introductory theoretical knowledge on deep learning and practical implementations using python programming language and associated packages. Therefore, participants will get an overall idea of deep learning and its applications. This workshop will also guide students on what they need to learn to able to build their careers in this field. Overall the workshop shall work as a useful starting point and will encourage participants to dig deeper into the field of deep learning.
 Intended Learning Outcomes:
 
-At the end of this workshop, active participants should be able to: 
+At the end of this workshop, active participants are expected to be able to: 
 
 	1.	Identify the importance and applications of deep learning. 
 	2.	Choose between machine learning and deep learning approaches to solve a particular problem.
