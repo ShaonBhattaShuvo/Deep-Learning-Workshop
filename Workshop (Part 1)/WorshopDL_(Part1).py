@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 """
-Created on Thu Jun 25 22:07:36 2020
-
 @author: Shaon Bhatta Shuvo
 """
 #Importing Libraries
@@ -147,7 +145,7 @@ plt.tight_layout()
 plt.show()
 
 #Generating synthetic non-linear data to solve classification problem
-X,y = skd.make_circles(n_samples=100, shuffle=False, noise=None, random_state=None, factor=0.8)
+X,y = skd.make_circles(n_samples=100, shuffle=False, noise=None, random_state=None, factor=0.5)
 
 #Following classes will not be shapped as circle, parameters can be changed to make it more non-linear
 #X, y = skd.make_classification(n_samples=100, n_features=2, n_redundant=0, n_informative=2,
