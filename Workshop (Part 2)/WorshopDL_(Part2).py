@@ -131,11 +131,11 @@ y_train = y_train[:-10000]
 
 #importing libraries
 from keras.models import Sequential
-from keras.layers import Conv2D, MaxPooling2D,Flatten,Dense, Dropout  
+from keras.layers import Conv2D, MaxPooling2D,Flatten,Dense,Dropout  
 #Creating a CNN model with Dropout Regularization
 model = Sequential()
-model.add(Conv2D(32, kernel_size=(3, 3),input_shape=input_shape,activation='relu')) #First Convolutional Layer
-#model.add(Conv2D(64, (3, 3), activation='relu')) #Second Convolutional Layer
+model.add(Conv2D(64, kernel_size=(3, 3),input_shape=input_shape,activation='relu')) #First Convolutional Layer
+#model.add(Conv2D(32, (3, 3), activation='relu')) #Second Convolutional Layer
 model.add(MaxPooling2D(pool_size=(2, 2)))    #Max Pooling Layer
 #model.add(Dropout(0.25))  #Adding Dropout Regularization 
 model.add(Flatten())     #Flattening the matrix into vector 
@@ -178,3 +178,4 @@ plt.show()
 # Evaluating the performance on the Test set 
 test_loss, test_accuracy = model.evaluate(X_test, y_test, verbose=2)
 print('Test loss: {0:.2f}, Test Accuracy: {1:.2f}%'.format(test_loss, test_accuracy*100)) 
+
