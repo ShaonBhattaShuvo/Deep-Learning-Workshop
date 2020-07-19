@@ -282,7 +282,6 @@ training_set = train_datagen.flow_from_directory(directory = 'Dataset/Train', #d
                                                  target_size = (IMG_HEIGHT, IMG_WIDTH),
                                                  batch_size = BATCH_SIZE,
                                                  class_mode = 'categorical')
-
 #Preparing the Validation set
 validation_set = validation_datagen.flow_from_directory(directory = 'Dataset/Validation',
                                                  target_size = (IMG_HEIGHT, IMG_WIDTH),
@@ -293,3 +292,18 @@ test_set = test_datagen.flow_from_directory(directory = 'Dataset/Test',
                                             target_size = (IMG_HEIGHT, IMG_WIDTH),
                                             batch_size = BATCH_SIZE,
                                             class_mode = 'categorical')
+
+#displaying a portion of random batch images from the dataset
+def show_batch(image_batch, label_batch):
+  plt.figure(figsize=(10,10))
+  for i in range(25):
+      plt.subplot(5,5,i+1)
+      plt.imshow(image_batch[i])
+      for j in range(len(class_names)):
+          if(label_batch[i][j]==1):
+              plt.title(class_names[j])
+              break;
+      plt.axis('off')
+
+image_batch, label_batch = next(training_set)
+show_batch(image_batch, label_batch)
