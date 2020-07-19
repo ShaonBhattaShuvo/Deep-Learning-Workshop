@@ -53,5 +53,61 @@ y_val = y_train[-10000:]
 X_train = X_train[:-10000]
 y_train = y_train[:-10000]
 
+#convert class vectors to binary class matrices
+#we can avoid this step by using 'sparse_categorical_crossentropy' loss
+#num_classes = len(np.unique(y_test))
+#y_train = keras.utils.to_categorical(y_train, num_classes)
+#y_test = keras.utils.to_categorical(y_test, num_classes)
+#y_val = keras.utils.to_categorical(y_val, num_classes)
+
+#Creating the deep learning model 
+model = tfk.Sequential()
+model.add(tfk.layers.Dense(50,input_shape=(784,), activation='relu')) #First Hidden Layer
+model.add(tfk.layers.Dense(100, activation='relu')) #Second  Hidden Layer
+model.add(tfk.layers.Dense(10, activation='softmax')) #Output Layer
+
+#Model can be crated using following approach as well
+#input_units = tfk.Input(shape=(2,))
+#hidden_layer1 = tfk.layers.Dense(100, activation ='relu')((input_units))
+#hidden_layer2 = tfk.layers.Dense(50, activation ='relu')(hidden_layer1)
+#prediction = tfk.layers.Dense(1, activation ='sigmoid')(hidden_layer2)
+#model = tfk.models.Model(inputs=input_units, outputs=prediction)
+
+#model Looks like:  2 input -> [50 units in layer1] ->[100 units in layer2] -> 1 output
+
+# Compiling the model for binary classification # Use loss = categorical_crossentropy for multiclass prediction. 
+model.compile(optimizer='adam',                         
+              loss='sparse_categorical_crossentropy',
+              metrics=['sparse_categorical_accuracy'])
+#Model's Summary
+model.summary()
+
+#Training the model 
+training = model.fit(X_train,y_train, epochs = 20, batch_size =5000, validation_data =(X_val,y_val))
+
+#Visulaizing the Training and Validation Sets Loss and Accuracy
+fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(8,4))
+#Plot training and validation accuracy values
+#axes[0].set_ylim(0,1) #if we want to limit axis in certain range
+axes[0].plot(training.history['sparse_categorical_accuracy'], label='Train')
+axes[0].plot(training.history['val_sparse_categorical_accuracy'], label='Validation')
+axes[0].set_title('Model Accuracy')
+axes[0].set_xlabel('Epoch')
+axes[0].set_ylabel('Accuracy')
+axes[0].legend()
+#Plot training and validation loss values
+#axes[1].set_ylim(0,1)
+axes[1].plot(training.history['loss'], label='Train')
+axes[1].plot(training.history['val_loss'], label='Validation')
+axes[1].set_title('Model Loss')
+axes[1].set_xlabel('Epoch')
+axes[1].set_ylabel('Loss')
+axes[1].legend()
+plt.tight_layout()
+plt.show()
+
+# Evaluating the performance on the Test set 
+test_loss, test_accuracy = model.evaluate(X_test, y_test, verbose=2)
+print('Test loss: {0:.2f}, Test Accuracy: {1:.2f}%'.format(test_loss, test_accuracy*100)) 
  
 
