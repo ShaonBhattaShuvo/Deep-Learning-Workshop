@@ -270,7 +270,7 @@ IMG_HEIGHT = 150
 OUTPUT_CLASSES = 4
 BATCH_SIZE = 25
 EPOCHS = 15
-
+#Counting total training images (Summation of all classes)
 total_train_images = 0;
 for i in range(len(trainset)):
     total_train_images += len(os.listdir(trainset[i]))
@@ -307,3 +307,24 @@ def show_batch(image_batch, label_batch):
 
 image_batch, label_batch = next(training_set)
 show_batch(image_batch, label_batch)
+
+######################
+#Model Implementation
+#####################
+
+#Creating the base pre-trained model using InceptV3
+from keras.applications.inception_v3 import InceptionV3
+base_model = InceptionV3(weights='imagenet', include_top=False)
+print(len(base_model.layers))
+#Adding some more layer on top of pretained InceptV3 model
+pretrained_model = base_model.output
+extra_layer1 = GlobalAveragePooling2D()(pretrained_model) # Adding a global spatial average pooling layer
+extra_layer2 = Dense(1024, activation='relu')(extra_layer1) # Adding a fully-connected layer
+output_layer = Dense(OUTPUT_CLASSES, activation='softmax')(extra_layer2) #Output layer
+
+# this is the model we will train
+from keras.models import Model
+model = Model(inputs=base_model.input, outputs=output_layer)
+print(len(model.layers))
+#model summary 
+model.summary()
