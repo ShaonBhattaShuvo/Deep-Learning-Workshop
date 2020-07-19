@@ -4,15 +4,9 @@
 """
 #Importing Libraries
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
-import sklearn.datasets as skd
-from sklearn import preprocessing 
 import tensorflow.keras as tfk
-from sklearn.linear_model import LinearRegression 
-from sklearn.model_selection import train_test_split
 from sklearn import metrics 
-from mlxtend.plotting import plot_decision_regions
 
 #loading the datset from keras 
 mnist = tfk.datasets.mnist
