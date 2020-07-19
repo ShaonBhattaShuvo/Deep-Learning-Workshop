@@ -131,7 +131,7 @@ y_train = y_train[:-10000]
 
 #importing libraries
 from keras.models import Sequential
-from keras.layers import Conv2D, MaxPooling2D,Flatten,Dense,Dropout  
+from keras.layers import Conv2D, MaxPooling2D,Flatten,Dense,Dropout,GlobalAveragePooling2D  
 #Creating a CNN model with Dropout Regularization
 model = Sequential()
 model.add(Conv2D(64, kernel_size=(3, 3),input_shape=input_shape,activation='relu')) #First Convolutional Layer
@@ -179,3 +179,117 @@ plt.show()
 test_loss, test_accuracy = model.evaluate(X_test, y_test, verbose=2)
 print('Test loss: {0:.2f}, Test Accuracy: {1:.2f}%'.format(test_loss, test_accuracy*100)) 
 
+# =============================================================================
+# ###########################################################################################
+# # CNN with Transfer Learning
+# ###########################################################################################
+# =============================================================================
+
+# #importing libraries
+import os
+# Here's our 4 categories that we have to classify.
+class_names = ['Bloodroot', 'Clubmoss', 'Dandelion', 'Lobelia']
+###################
+#Data Preprocessing
+###################
+#Counting the size of each classes in training, validation and testing dataset
+# Traing Dataset
+trainset = [class_names[0],class_names[1],class_names[2],class_names[3]] 
+for i in range(len(class_names)):
+    trainset[i] = os.path.join('Dataset/Train/',class_names[i])
+print("Size of each class of Training Set: ")
+for i in range(len(trainset)):
+    print(class_names[i],' has ',len(os.listdir(trainset[i])), 'instances.')
+
+#Validation Dataset
+validationset = [class_names[0],class_names[1],class_names[2],class_names[3]] 
+for i in range(len(class_names)):
+    validationset[i] = os.path.join('Dataset/Validation/',class_names[i])
+print("\nSize of each class of Validation Set: ")
+for i in range(len(validationset)):
+    print(class_names[i],' has ',len(os.listdir(validationset[i])), 'instances.')
+
+#Test Dataset
+testset = [class_names[0],class_names[1],class_names[2],class_names[3]] 
+for i in range(len(class_names)):
+    testset[i] = os.path.join('Dataset/Test/',class_names[i])
+print("\nSize of each class of Test Set: ")
+for i in range(len(testset)):
+    print(class_names[i],' has ',len(os.listdir(validationset[i])), 'instances.')
+
+#Plotting the pie chart to check the proporstion of train, validation and test set .
+#Training, Testing and Validation set should be independent and identically distributed (iid)
+sizes_trainset = []
+for i in range(len(trainset)):
+    sizes_trainset.append(len(os.listdir(trainset[i])))
+explode = (0, 0, 0, 0)  
+plt.pie(sizes_trainset, explode=explode, labels=class_names,
+autopct='%1.1f%%', shadow=True, startangle=150)
+plt.axis('equal')
+plt.title('Proportion of each observed category of Training set')
+plt.show()
+
+sizes_validationset = []
+for i in range(len(trainset)):
+    sizes_validationset.append(len(os.listdir(validationset[i])))
+explode = (0, 0, 0, 0)  
+plt.pie(sizes_validationset, explode=explode, labels=class_names,
+autopct='%1.1f%%', shadow=True, startangle=150)
+plt.axis('equal')
+plt.title('Proportion of each observed category of Validation set')
+plt.show()
+
+sizes_testset = []
+for i in range(len(testset)):
+    sizes_testset.append(len(os.listdir(testset[i])))
+explode = (0, 0, 0, 0)  
+plt.pie(sizes_testset, explode=explode, labels=class_names,
+autopct='%1.1f%%', shadow=True, startangle=150)
+plt.axis('equal')
+plt.title('Proportion of each observed category of Test set')
+plt.show()
+
+#Data Augmentation : to generate different shapes of images from the given data.(reduces overfitting)
+from keras.preprocessing.image import ImageDataGenerator
+train_datagen = ImageDataGenerator(rescale = 1./255,    #Rescaling training data
+                                   rotation_range=40,
+                                   width_shift_range =0.2,
+                                   height_shift_range=0.2,
+                                   shear_range = 0.2,
+                                   zoom_range = 0.2,
+                                   horizontal_flip = True)
+#Rescaling validation and test dataset. 
+validation_datagen = ImageDataGenerator(rescale = 1./255)
+test_datagen = ImageDataGenerator(rescale = 1./255)
+
+#Since we have collected data from different sources of internet. Height and width  of every images are not same.
+#However, we need to make each images of  same size in terms of height and width for purpose of train, validation and testing.               
+IMG_WIDTH = 150
+IMG_HEIGHT = 150  
+
+OUTPUT_CLASSES = 4
+BATCH_SIZE = 25
+EPOCHS = 15
+
+total_train_images = 0;
+for i in range(len(trainset)):
+    total_train_images += len(os.listdir(trainset[i]))
+
+STEPS_PER_EPOCH = np.ceil(total_train_images/BATCH_SIZE)
+
+#Preparing the Training set
+training_set = train_datagen.flow_from_directory(directory = 'Dataset/Train', #directory=str(data_dir)
+                                                 target_size = (IMG_HEIGHT, IMG_WIDTH),
+                                                 batch_size = BATCH_SIZE,
+                                                 class_mode = 'categorical')
+
+#Preparing the Validation set
+validation_set = validation_datagen.flow_from_directory(directory = 'Dataset/Validation',
+                                                 target_size = (IMG_HEIGHT, IMG_WIDTH),
+                                                 batch_size = BATCH_SIZE,
+                                                 class_mode = 'categorical')
+#Preparing the Test set
+test_set = test_datagen.flow_from_directory(directory = 'Dataset/Test',
+                                            target_size = (IMG_HEIGHT, IMG_WIDTH),
+                                            batch_size = BATCH_SIZE,
+                                            class_mode = 'categorical')
