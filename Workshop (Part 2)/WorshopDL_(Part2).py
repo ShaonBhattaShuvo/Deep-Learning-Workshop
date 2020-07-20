@@ -66,7 +66,7 @@ model.add(tfk.layers.Dense(100, activation='relu')) #Second  Hidden Layer
 model.add(tfk.layers.Dense(10, activation='softmax')) #Output Layer
 #model Looks like:  784 input -> [50 units in layer1] ->[100 units in layer2] -> 1 output
 
-# Compiling the model for binary classification # Use loss = categorical_crossentropy for multiclass prediction. 
+# Compiling the model  
 model.compile(optimizer='adam',                         
               loss='sparse_categorical_crossentropy',
               metrics=['sparse_categorical_accuracy'])
@@ -144,7 +144,7 @@ model.add(Dense(100, activation='relu')) #Adding One more hidden NN layer
 #model.add(Dropout(0.5)) #Adding Dropout Regularization to the Fully Connected Layer 
 model.add(Dense(10, activation='softmax')) #Output Layer
 
-# Compiling the model for binary classification # Use loss = categorical_crossentropy for multiclass prediction. 
+# Compiling the model  
 model.compile(optimizer='adam',                         
               loss='sparse_categorical_crossentropy',
               metrics=['sparse_categorical_accuracy'])
@@ -326,5 +326,77 @@ output_layer = Dense(OUTPUT_CLASSES, activation='softmax')(extra_layer2) #Output
 from keras.models import Model
 model = Model(inputs=base_model.input, outputs=output_layer)
 print(len(model.layers))
-#model summary 
+
+# we chose to train the top 2 inception blocks, i.e. we will freeze the first 249 layers and unfreeze the rest:
+for layer in model.layers[:249]:
+   layer.trainable = False
+for layer in model.layers[249:]:
+   layer.trainable = True
+
+#Model summary
 model.summary()
+#Model comiplation
+model.compile(optimizer='adam', 
+              loss='categorical_crossentropy', 
+              metrics=[tfk.metrics.Precision(),tfk.metrics.Recall(),'accuracy'])
+
+#Traing the model 
+early_stopping = tfk.callbacks.EarlyStopping(patience =1)  #Early Stopping regularization
+training = model.fit_generator(training_set,
+                         steps_per_epoch = STEPS_PER_EPOCH,      #total_training_images/batch_size
+                         epochs = 15,
+                         validation_data = validation_set,
+                         callbacks=[early_stopping])
+
+fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(8,4))
+#ploting training and validation accuracy values
+axes[0].set_ylim(0,1)
+axes[0].plot(training.history['accuracy'], label='Train')
+axes[0].plot(training.history['val_accuracy'], label='Validation')
+axes[0].set_title('Model Accuracy')
+axes[0].set_xlabel('Epoch')
+axes[0].set_ylabel('Accuracy')
+axes[0].legend()
+#ploting training and validation loss values
+#axes[1].set_ylim(0,1)
+axes[1].plot(training.history['loss'], label='Train')
+axes[1].plot(training.history['val_loss'], label='Validation')
+axes[1].set_title('Model Loss')
+axes[1].set_xlabel('Epoch')
+axes[1].set_ylabel('Loss')
+axes[1].legend()
+plt.tight_layout()
+plt.show()
+
+#Storing precision and recall valuses from learning.history()
+learning_list = list(training.history.keys())
+precision = learning_list[5]
+recall = learning_list[6]
+val_precision = learning_list[1]
+val_recall = learning_list[2]
+
+fig1, axes1 = plt.subplots(nrows=1, ncols=2, figsize=(8,4))
+#ploting training and validation precision values
+axes1[0].set_ylim(0,1)
+axes1[0].plot(training.history[precision], label='Train')
+axes1[0].plot(training.history[val_precision], label='Validation')
+axes1[0].set_title('Model Precision')
+axes1[0].set_xlabel('Epoch')
+axes1[0].set_ylabel('Precision')
+axes1[0].legend()
+#ploting training and validation recall values
+axes1[1].set_ylim(0,1)
+axes1[1].plot(training.history[recall], label='Train')
+axes1[1].plot(training.history[val_recall], label='Validation')
+axes1[1].set_title('Model Recall')
+axes1[1].set_xlabel('Epoch')
+axes1[1].set_ylabel('Recall')
+axes1[1].legend()
+plt.tight_layout()
+plt.show()
+########################
+#Performance Evaluation
+########################
+print("Evaluate on test data")
+test_loss, test_precision, test_recall,  test_accuracy  = model.evaluate(test_set, verbose=0)
+print("Test Loss: {0:.2f}, Test Precision: {1:.2f}, Test Recall: {2:.2f}, Test Accuracy: {3:.2f}%".format(test_loss,test_precision,test_recall, test_accuracy*100))
