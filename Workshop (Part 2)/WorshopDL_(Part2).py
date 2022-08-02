@@ -314,7 +314,7 @@ show_batch(image_batch, label_batch)
 
 #Creating the base pre-trained model using InceptV3
 from keras.applications.inception_v3 import InceptionV3
-base_model = InceptionV3(weights='imagenet', include_top=False)
+base_model = InceptionV3(weights='imagenet', include_top=False) #Work with python3.6
 print(len(base_model.layers))
 #Adding some more layer on top of pretained InceptV3 model
 pretrained_model = base_model.output
